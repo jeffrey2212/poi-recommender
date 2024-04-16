@@ -78,29 +78,23 @@ def parse_gowalla_data(file_path):
 # Helper function to parse the NYC data
 def parse_nyc_data(file_path):
     data = []
-    with open(file_path, 'r') as file:
-        next(file)  # Skip the header line
+    with open(file_path, "r", encoding="latin-1", errors="replace") as file:
         for line in file:
-            fields = line.strip().split('\t')
-            user_id = fields[0]
-            poi_id = fields[1]
-            category_id = fields[2]
-            category_name = fields[3]
-            latitude = float(fields[4])
-            longitude = float(fields[5])
-            timezone_offset = int(fields[6])
-            utc_time = fields[7]
-            data.append({
-                'user_id': user_id,
-                'poi_id': poi_id,
-                'category_id': category_id,
-                'category_name': category_name,
-                'latitude': latitude,
-                'longitude': longitude,
-                'timezone_offset': timezone_offset,
-                'utc_time': utc_time
-            })
-    return pd.DataFrame(data)
+            # Process the line
+            line_data = line.strip().split("\t")
+            if len(line_data) == 5:
+                user_id, poi_id, category_id, category_name, timezone_offset = line_data
+                latitude, longitude = 0.0, 0.0  # Set default values for latitude and longitude
+                data.append({
+                    "user_id": user_id,
+                    "poi_id": poi_id,
+                    "category_id": category_id,
+                    "category_name": category_name,
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "timezone_offset": timezone_offset
+                })
+    return data
 
 def preprocess_data(data):
     # Handle missing values
